@@ -12,7 +12,7 @@
 #include "drawing.h"
 
 #include "epd_interface.h"
-#include "uc_variant3_bwry.h"
+#include "uc_variant4_bwry.h"
 
 #define EPD_CMD_POWER_OFF 0x02
 #define EPD_CMD_POWER_ON 0x04
@@ -25,16 +25,16 @@
 #define EPD_CMD_RESOLUTION_SETTING 0x61
 #define EPD_CMD_UNKNOWN 0xF8
 
-void epdvar3bwry::epdEnterSleep() {
+void epdvar4bwry::epdEnterSleep() {
     epdReset(EPD_BUSY_SSD);
     delay(100);
     epd_cmd(EPD_CMD_POWER_OFF);
-    delay(100);
+    epdBusyWaitRising(2000); // Wait for BUSY high
     epdWrite(EPD_CMD_DEEP_SLEEP, 1, 0xA5);
     delay(100);
 }
 
-void epdvar3bwry::epdSetup() {
+void epdvar4bwry::epdSetup() {
     pinMode(EPD_BS, OUTPUT);
     digitalWrite(EPD_BS, 1);
     epdReset(EPD_BUSY_SSD);
@@ -49,21 +49,18 @@ void epdvar3bwry::epdSetup() {
     epdWrite(EPD_CMD_RESOLUTION_SETTING, 4, 0x02, 0x58, 0x01, 0xC0);
     epdWrite(0xE3, 1, 0xAA);
     epdWrite(0xE5, 1, 0x03);
-    epdBusyWaitRising(3000);  // Wait for display to finish initialization (BUSY goes HIGH when ready)
+    epdBusyWaitRising(2000);
     epdWrite(0x41, 1, 0x00);
     epdWrite(0x40, 0);
-    delay(10);  // ~10ms delay observed in capture (CS high for ~5ms after 0x40 transaction)
-    epdWrite(0x18, 1, 0xA0); // not sure what is this 
+    delay(10);
+    epdWrite(0x18, 1, 0xA0);
     epdWrite(0x00, 2, 0xE7, 0x06);
-    epdWrite(0x10, 0);
+    epd_cmd(EPD_CMD_DISPLAY_START_TRANSMISSION_DTM1);
     
     printf("EPD INIT COMPLETE\n");
 }
 
-void epdvar3bwry::epdWriteDisplayData() {
-    // send a dummy byte. Don't ask me why, it's what she likes. She'll sometimes display garbage on the b/w framebuffer if she doesn't get the dummy byte.
-    epd_data(0x00);
-
+void epdvar4bwry::epdWriteDisplayData() {
     uint8_t* drawline_b = nullptr;
     uint8_t* drawline_r = nullptr;
     uint8_t* drawline_y = nullptr;
@@ -97,7 +94,6 @@ void epdvar3bwry::epdWriteDisplayData() {
         }
 
         for (uint16_t x = 0; x < this->effectiveXRes;) {
-            // merge color buffers into one
             uint8_t* temp = &(buf[x / 2]);
             for (uint8_t shift = 0; shift < 2; shift++) {
                 *temp <<= 4;
@@ -114,16 +110,13 @@ void epdvar3bwry::epdWriteDisplayData() {
                 x++;
             }
         }
-        // start transfer of the 'odd' data line
         epdSPIAsyncWrite(buf, (this->effectiveXRes / 2));
         epdSPIWait();
     }
     printf("\nRendering complete in %lu ms\n", millis()- drawStart);
 
-    // flush the draw list, make sure items don't appear on subsequent screens
     drawItem::flushDrawItems();
 
-    // wait until the last line of display has finished writing and clean our stuff up
     epdSPIWait();
     epdDeselect();
     if (buf) free(buf);
@@ -132,28 +125,24 @@ void epdvar3bwry::epdWriteDisplayData() {
     if (drawline_y) free(drawline_y);
 }
 
-void epdvar3bwry::selectLUT(uint8_t lut) {
-    // implement alternative LUTs here. Currently just reset the watchdog to two minutes,
-    // to ensure it doesn't reset during the much longer bootup procedure
-    lut += 1;  // make the compiler a happy camper
+void epdvar4bwry::selectLUT(uint8_t lut) {
+    lut += 1;
     wdt120s();
     return;
 }
 
-void epdvar3bwry::draw() {
+void epdvar4bwry::draw() {
     this->drawNoWait();
     this->epdWaitRdy();
-    // epdBusyWaitRising(50000);
-    // delay(100);
 }
-void epdvar3bwry::drawNoWait() {
+void epdvar4bwry::drawNoWait() {
     this->epdWriteDisplayData();
     printf("Starting draw\n");
-    epdWrite(EPD_CMD_DISPLAY_REFRESH, 1, 0x00);  // 0x12 with data 0x00 from capture
+    epdWrite(EPD_CMD_DISPLAY_REFRESH, 1, 0x00);
     printf("draw complete\n");
 }
 
-void epdvar3bwry::epdWaitRdy() {
+void epdvar4bwry::epdWaitRdy() {
     epdBusyWaitRising(50000);
     printf("done waiting too\n");
     delay(100);

@@ -177,7 +177,7 @@ void identifyTagInfo() {
             break;
         case 0x17:
             if (epdXRes == 600 && epdYRes == 448) {
-                epd = new epdvar3bwry;
+                epd = new epdvar4bwry;
             } else {
                 epd = new epdvarbwry;
             }

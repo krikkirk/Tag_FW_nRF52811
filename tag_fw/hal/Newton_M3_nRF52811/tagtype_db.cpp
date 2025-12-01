@@ -176,7 +176,11 @@ void identifyTagInfo() {
             epd = new uc8179;
             break;
         case 0x17:
-            epd = new epdvarbwry;
+            if (epdXRes == 600 && epdYRes == 448) {
+                epd = new epdvar3bwry;
+            } else {
+                epd = new epdvarbwry;
+            }
             break;
     }
 
@@ -349,6 +353,12 @@ void identifyTagInfo() {
             tag.macSuffix = 0x9490;
             epd->drawDirectionRight = false;
             tag.OEPLtype = SOLUM_M3_BWRY_30;
+            epd->epdMirrorV = true;
+            break;
+        case STYPE_SIZE_60_BWRY:
+            tag.macSuffix = 0x9690;
+            epd->drawDirectionRight = false;
+            tag.OEPLtype = SOLUM_M3_BWRY_60;
             epd->epdMirrorV = true;
             break;
         case STYPE_SIZE_013:

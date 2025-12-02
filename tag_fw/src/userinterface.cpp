@@ -236,6 +236,17 @@ void showSplashScreen() {
             //  addFlashImage(10, 10, COLOR_BLACK, rotation::ROTATE_0, newton);
             addQR(100, 120, 3, 2, "https://openepaperlink.eu/tag/0/%02X/%02X%02X%02X%02X%02X%02X%02X%02X/", tag.OEPLtype, mSelfMac[7], mSelfMac[6], mSelfMac[5], mSelfMac[4], mSelfMac[3], mSelfMac[2], mSelfMac[1], mSelfMac[0]);
             break;
+        case STYPE_SIZE_60_BWRY:
+            fr.setFont(&FreeSansBold18pt7b);
+            fr.epdPrintf(5, 5, COLOR_BLACK, rotation::ROTATE_0, "OpenEPaperLink");
+            fr.setFont(&FreeSansBold18pt7b);
+            fr.epdPrintf(15, 40, COLOR_RED, rotation::ROTATE_0, "Newton M3 Pro 6.0\"");
+            fr.setFont(&FreeSans9pt7b);
+            fr.epdPrintf(epd->Xres - 20, 110, COLOR_YELLOW, rotation::ROTATE_270, "FW: %04X-%s", fwVersion, fwVersionSuffix);
+            fr.epdPrintf(5, epd->Yres - 20, 0, rotation::ROTATE_0, "MAC: %02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X", mSelfMac[7], mSelfMac[6], mSelfMac[5], mSelfMac[4], mSelfMac[3], mSelfMac[2], mSelfMac[1], mSelfMac[0]);
+            //  addFlashImage(10, 10, COLOR_BLACK, rotation::ROTATE_0, newton);
+            addQR(100, 120, 3, 2, "https://openepaperlink.eu/tag/0/%02X/%02X%02X%02X%02X%02X%02X%02X%02X/", tag.OEPLtype, mSelfMac[7], mSelfMac[6], mSelfMac[5], mSelfMac[4], mSelfMac[3], mSelfMac[2], mSelfMac[1], mSelfMac[0]);
+            break;
     }
 #ifdef DEBUG_BUILD
     drawMask(15, epd->Yres - 53, 129, 33, COLOR_BLACK);

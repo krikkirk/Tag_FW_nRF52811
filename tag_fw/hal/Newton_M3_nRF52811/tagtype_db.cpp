@@ -61,7 +61,7 @@ void identifyTagInfo() {
     4B F3 DE 04 15 05 07 04 00 0F 01 C8 00 90 00 38 00 07 01 19 00 00 4D FF FF FF FF FF FF FF FF FF     1.3-peghook
     C1 D3 42 06 16 02 0A 04 00 0A 01 80 02 C0 03 38 00 03 81 9D 00 00 4A FF FF FF FF FF FF FF FF FF     11.6" BWR
     04 5A 1F 05 15 06 12 04 00 0D 01 2C 01 C8 00 38 00 07 81 9D 00 00 44 FF FF FF FF FF FF FF FF FF     2.7" BWR
-    
+
     F5 71 3E 07 16 09 04 04 00 17 03 A8 00 A8 00 05 00 07 81 9D 00 00 66 FF FF FF FF FF FF FF FF FF     1.6 BWRY
     F8 FA BF 7E 16 09 0D 04 00 17 03 28 01 A8 00 39 00 07 81 9D 00 00 67 FF FF FF FF FF FF FF FF FF     2.4 BWRY
     6B 75 A6 7E 16 08 15 04 00 17 03 90 01 A8 00 39 00 07 81 9D 00 00 68 FF FF FF FF FF FF FF FF FF     3.0 BWRY
@@ -119,7 +119,7 @@ void identifyTagInfo() {
             buttonPin[i] = getUICRByte(CUSTOM_SETUP_ADDR+8+i);
             buttonMode[i] = getUICRByte(CUSTOM_SETUP_ADDR+16+i);
         }
-        
+
         printf("magic number found for custom setup\n");
         /*for(int i=0; i<8; i++){
             printf("Button %d: pin=%d, config=%d\n", i, buttonPin[i], buttonMode[i]);
@@ -177,7 +177,7 @@ void identifyTagInfo() {
             break;
         case 0x17:
             if (epdXRes == 600 && epdYRes == 448) {
-                epd = new epdvar4bwry;
+                epd = new uc8159_var;
             } else {
                 epd = new epdvarbwry;
             }

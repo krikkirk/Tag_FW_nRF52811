@@ -24,9 +24,8 @@ void selectLUT(uint8_t lut);
 #include "dualssd.h"
 #include "uc_variant_029.h"
 #include "uc8159.h"
+#include "uc8159_var.h"
 #include "uc8179.h"
 #include "uc_variant_bwry.h"
-#include "uc_variant3_bwry.h"
-#include "uc_variant4_bwry.h"
 
 #endif

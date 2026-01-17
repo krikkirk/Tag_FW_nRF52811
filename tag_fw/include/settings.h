@@ -10,7 +10,7 @@
 // #define DEBUGBLOCKS                 // uncomment to enable extra debug information on the block transfers
 // #define DEBUG_SHOW_TAGINFO
 // #define DEBUG_DRAWING
-#define DEBUG_EPD
+// #define DEBUG_EPD
 // #define DEBUG_FS
 // #define DEBUG_COMPRESSION
 // #define DEBUG_PROTO
